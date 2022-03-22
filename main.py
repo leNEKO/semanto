@@ -27,7 +27,9 @@ def score_display(game: Game):
             (
                 info['turn'],
                 word,
-                info['score'] * 100,
+                '{:.2f}'.format(
+                    info['score'] * 100
+                ),
                 format_progress(
                     info['progress']
                 )
