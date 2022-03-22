@@ -65,6 +65,9 @@ class Cli:
     def game_loop(self):
         while True:
             word = click.prompt('word', type=str)
+            if word == '???':
+                click.echo(f'👹 it was "{self._game._secret_word}"')
+                break
 
             try:
                 score = self._game.move(word)
