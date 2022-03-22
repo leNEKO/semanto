@@ -4,18 +4,21 @@ from tabulate import tabulate
 from semantix.database import Database
 from semantix.game import Game
 
+
 def score_display(game: Game):
-    LENGTH = 64
+    PROGRESS_BAR_LENGTH = 64
+
     def format_progress(progress):
         if progress is None:
             progress = 0
 
-        progress_amount = int(progress * (LENGTH / 1000))
+        progress_ratio = PROGRESS_BAR_LENGTH / Database.TOPN
+        progress_amount = int(progress * progress_ratio)
 
         return ''.join(
             (
                 '|' * progress_amount,
-                '.' * (LENGTH - progress_amount),
+                '.' * (PROGRESS_BAR_LENGTH - progress_amount),
             )
         )
 
@@ -35,28 +38,40 @@ def score_display(game: Game):
     )
 
 
+def loop(database: Database, secret_word: str):
+    game = Game(database, secret_word)
+
+    while True:
+        word = click.prompt('word', type=str)
+
+        try:
+            score = game.move(word)
+            click.clear()
+
+            click.echo(
+                score_display(game)
+            )
+            if score == 1:
+                click.echo()
+                click.echo(f'💖 "{word}" found in {game.turn} turns')
+                break
+        except KeyError as e:
+            click.echo(f'❓ "{word}" not found')
+
+        click.echo()
+
 @click.command()
 @click.argument('secret_word')
 def main(secret_word: str):
     click.clear()
     database = Database('data/source.bin')
-    game = Game(database, secret_word)
 
     while True:
+        loop(database, secret_word)
         click.echo()
-        word = click.prompt('word', type=str)
-        click.echo()
-        try:
-            click.clear()
-            score = game.move(word)
-            if score == 1:
-                click.echo(f'{word} found 💖')
-        except KeyError as e:
-            click.echo(f'{word} not found ❓')
-        click.echo(
-            score_display(game)
-        )
-
+        if click.confirm('New game?', default=True) is False:
+            break
+        click.clear()
 
 
 if __name__ == '__main__':

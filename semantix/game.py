@@ -28,7 +28,11 @@ class Game:
 
         self._scores.update(item)
 
-        return score
+        return (
+            1
+            if word == self._secret_word
+            else score
+        )
 
     def get_word_pos(self, search_word: str) -> int:
         for pos, word in enumerate(self.top_words):
@@ -62,4 +66,8 @@ class Game:
             ):
                 max_progress = progress
 
-        return max_progress
+        return
+
+    @property
+    def turn(self):
+        return self._turn
