@@ -15,14 +15,13 @@ class Game:
 
         if word == self._secret_word:
             score = 1
-            progress = Database.TOPN
+            progress = Database.SIMILAR_TOPN
         else:
             score = self._database.get_distance(
                 self._secret_word,
                 word
             )
             progress = self.get_word_pos(word)
-
 
         item = {
             word: {
