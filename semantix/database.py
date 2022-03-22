@@ -12,6 +12,9 @@ class Database:
             unicode_errors='ignore'
         )
 
+    def word_is_avalaible(self, word):
+        return self._model.has_index_for(word)
+
     def get_random(self):
         return self._model.get_normed_vectors()
 

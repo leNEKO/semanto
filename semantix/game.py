@@ -5,9 +5,10 @@ from .database import Database
 class Game:
     def __init__(self, database: Database, secret_word: str):
         self._database = database
+        self._secret_word = secret_word
+
         self._scores = {}
         self._turn = 0
-        self._secret_word = secret_word
         self._top_words = None
 
     def move(self, word: str):

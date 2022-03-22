@@ -3,15 +3,17 @@ import click
 from semantix.database import Database
 from semantix.game import Game
 from semantix.cli import Cli
+from semantix.dictionary import Dictionary
 
 
 @click.command()
-@click.argument('secret_word')
-def main(secret_word: str):
-    click.clear()
-    database = Database('data/source.bin')
-    cli = Cli(database, secret_word)
+def main():
+    cli = Cli(
+        Database('data/source.bin'),
+        Dictionary()
+    )
 
+    click.clear()
     cli.main_loop()
 
 

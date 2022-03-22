@@ -1,15 +1,17 @@
 from tabulate import tabulate
 from .database import Database
+from .dictionary import Dictionary
 from .game import Game
 
 import click
 
+
 class Cli:
     PROGRESS_BAR_LENGTH = 64
 
-    def __init__(self, database: Database, secret_word: str):
+    def __init__(self, database: Database, dictionary: Dictionary):
         self._database = database
-        self._secret_word = secret_word
+        self._dictionary = dictionary
 
     def _format_progress(self, progress):
         if progress is None:
@@ -43,11 +45,16 @@ class Cli:
             ('t', 'word', 'score', 'progress')
         )
 
+    def get_next_available_word(self):
+        while next_word := self._dictionary.next_word:
+            if self._database.word_is_avalaible(next_word):
+                return next_word
+
     def main_loop(self):
         while True:
             self._game = Game(
                 self._database,
-                self._secret_word
+                self.get_next_available_word()
             )
             self.game_loop()
             click.echo()
