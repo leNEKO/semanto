@@ -12,11 +12,17 @@ class Game:
 
     def move(self, word: str):
         self._turn += 1
-        score = self._database.get_distance(
-            self._secret_word,
-            word
-        )
-        progress = self.get_word_pos(word)
+
+        if word == self._secret_word:
+            score = 1
+            progress = Database.TOPN
+        else:
+            score = self._database.get_distance(
+                self._secret_word,
+                word
+            )
+            progress = self.get_word_pos(word)
+
 
         item = {
             word: {
@@ -28,11 +34,7 @@ class Game:
 
         self._scores.update(item)
 
-        return (
-            1
-            if word == self._secret_word
-            else score
-        )
+        return score
 
     def get_word_pos(self, search_word: str) -> int:
         for pos, word in enumerate(self.top_words):
