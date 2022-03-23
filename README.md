@@ -11,3 +11,7 @@ Download french word2vec
 ```shell
 ./main.py
 ```
+
+## WEB UI
+
+TODO
