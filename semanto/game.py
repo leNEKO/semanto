@@ -42,6 +42,10 @@ class Game:
                 return pos
 
     @property
+    def secret_word(self):
+        return self._secret_word
+
+    @property
     def top_words(self) -> list:
         if self._top_words is None:
             self._top_words = self._database.get_similar(self._secret_word)

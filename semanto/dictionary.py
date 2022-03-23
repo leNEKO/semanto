@@ -1,9 +1,14 @@
+'''Most frequent word dictionary
+'''
 from random import shuffle
+
 from wordfreq import top_n_list
 
 
 class Dictionary:
-    DICTIONARY_SIZE = 40_000
+    '''Frequent word dictionnary
+    '''
+    DICTIONARY_SIZE = 2_048
 
     def __init__(self):
         self._word_list = top_n_list('fr', self.DICTIONARY_SIZE)
@@ -11,4 +16,7 @@ class Dictionary:
 
     @property
     def next_word(self):
+        '''Get next random word
+        '''
+
         return self._word_list.pop()

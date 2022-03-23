@@ -1,15 +1,21 @@
+import click
 from tabulate import tabulate
+
 from .database import Database
 from .dictionary import Dictionary
 from .game import Game
 
-import click
-
 
 class Cli:
+    '''Cli game client
+    '''
     PROGRESS_BAR_LENGTH = 64
 
-    def __init__(self, database: Database, dictionary: Dictionary):
+    def __init__(
+        self,
+        database: Database,
+        dictionary: Dictionary,
+    ):
         self._database = database
         self._dictionary = dictionary
 
@@ -40,17 +46,24 @@ class Cli:
                         info['progress']
                     )
                 )
+
                 for word, info in self._game.scores.items()
             ],
             ('t', 'word', 'score', 'progress')
         )
 
     def get_next_available_word(self):
+        '''Get next frequency dictionary word available in the database
+        '''
+
         while next_word := self._dictionary.next_word:
             if self._database.word_is_avalaible(next_word):
                 return next_word
 
     def main_loop(self):
+        '''Main loop
+        '''
+
         while True:
             self._game = Game(
                 self._database,
@@ -58,15 +71,21 @@ class Cli:
             )
             self.game_loop()
             click.echo()
+
             if click.confirm('New game?', default=True) is False:
                 break
             click.clear()
 
     def game_loop(self):
+        '''Game round loop
+        '''
+
         while True:
             word = click.prompt('word', type=str)
+
             if word == '???':
-                click.echo(f'👹 it was "{self._game._secret_word}"')
+                click.echo(f'👹 it was "{self._game.secret_word}"')
+
                 break
 
             try:
@@ -76,11 +95,13 @@ class Cli:
                 click.echo(
                     self._score_display()
                 )
+
                 if score == 1:
                     click.echo()
                     click.echo(f'💖 "{word}" found in {self._game.turn} turns')
+
                     break
-            except KeyError as e:
+            except KeyError:
                 click.echo(f'❓ "{word}" not found')
 
             click.echo()
