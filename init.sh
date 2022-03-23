@@ -6,4 +6,3 @@ if [ ! -f "$BIN_PATH" ]; then
     curl "$URL" --output $BIN_PATH
 fi
 echo "👍 $BIN_PATH downloaded"
-

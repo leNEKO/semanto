@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import click
-from semantix.database import Database
-from semantix.game import Game
-from semantix.cli import Cli
-from semantix.dictionary import Dictionary
+from semanto.database import Database
+from semanto.game import Game
+from semanto.cli import Cli
+from semanto.dictionary import Dictionary
 
 
 @click.command()
