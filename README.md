@@ -10,6 +10,12 @@ Download french word2vec
 ./init.sh
 ```
 
+Requirements
+
+```shell
+pip install -r requirements.txt
+```
+
 ## CLI
 
 ```shell
