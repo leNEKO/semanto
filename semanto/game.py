@@ -1,15 +1,18 @@
 from collections import OrderedDict
 from .database import Database
+from .dictionary import Dictionary
 
 
-class Game:
-    def __init__(self, database: Database, secret_word: str):
-        self._database = database
+class Part:
+    def __init__(self, game, secret_word: str):
+        self._game = game
         self._secret_word = secret_word
 
         self._scores = {}
         self._turn = 0
         self._top_words = None
+
+        self._win = False
 
     def move(self, word: str):
         self._turn += 1
@@ -17,8 +20,9 @@ class Game:
         if word == self._secret_word:
             score = 1
             progress = Database.SIMILAR_TOPN
+            self._win = True
         else:
-            score = self._database.get_distance(
+            score = self._game._database.get_distance(
                 self._secret_word,
                 word
             )
@@ -28,7 +32,7 @@ class Game:
             word: {
                 'turn': self._turn,
                 'score': score,
-                'progress': progress
+                'progress': progress,
             }
         }
 
@@ -42,13 +46,17 @@ class Game:
                 return pos
 
     @property
+    def win(self):
+        return self._win
+
+    @property
     def secret_word(self):
         return self._secret_word
 
     @property
     def top_words(self) -> list:
         if self._top_words is None:
-            self._top_words = self._database.get_similar(self._secret_word)
+            self._top_words = self._game._database.get_similar(self._secret_word)
         return reversed(self._top_words)
 
     @property
@@ -77,3 +85,28 @@ class Game:
     @property
     def turn(self):
         return self._turn
+
+class Game:
+    def __init__(
+        self,
+        database: Database,
+        dictionary: Dictionary,
+    ):
+        self._database = database
+        self._dictionary = dictionary
+
+    def new(self, secret_word: str = None) -> Part:
+        return Part(
+            self,
+            secret_word
+            if secret_word is not None
+            else self.get_next_available_random_word()
+        )
+
+    def get_next_available_random_word(self):
+        '''Get next frequency dictionary word available in the database
+        '''
+        while next_random_word := self._dictionary.next_random_word:
+            if self._database.word_is_avalaible(next_random_word):
+                return next_random_word
+

@@ -2,22 +2,20 @@ import click
 from tabulate import tabulate
 
 from .database import Database
-from .dictionary import Dictionary
-from .game import Game
+from .game import Game, Part
 
 
 class Cli:
     '''Cli game client
     '''
     PROGRESS_BAR_LENGTH = 64
+    CHEAT_CODE = '???'
 
     def __init__(
         self,
-        database: Database,
-        dictionary: Dictionary,
+        game: Game
     ):
-        self._database = database
-        self._dictionary = dictionary
+        self._game = game
 
     def _format_progress(self, progress):
         if progress is None:
@@ -33,7 +31,7 @@ class Cli:
             )
         )
 
-    def _score_display(self):
+    def _score_display(self, part: Part):
         return tabulate(
             [
                 (
@@ -47,58 +45,47 @@ class Cli:
                     )
                 )
 
-                for word, info in self._game.scores.items()
+                for word, info in part.scores.items()
             ],
             ('t', 'word', 'score', 'progress')
         )
 
-    def get_next_available_word(self):
-        '''Get next frequency dictionary word available in the database
-        '''
-
-        while next_word := self._dictionary.next_word:
-            if self._database.word_is_avalaible(next_word):
-                return next_word
-
-    def main_loop(self):
+    def game_loop(self):
         '''Main loop
         '''
-
         while True:
-            self._game = Game(
-                self._database,
-                self.get_next_available_word()
+            self.part_loop(
+                self._game.new()
             )
-            self.game_loop()
             click.echo()
 
             if click.confirm('New game?', default=True) is False:
                 break
             click.clear()
 
-    def game_loop(self):
+    def part_loop(self, part: Part):
         '''Game round loop
         '''
 
         while True:
             word = click.prompt('word', type=str)
 
-            if word == '???':
-                click.echo(f'👹 it was "{self._game.secret_word}"')
+            if word == self.CHEAT_CODE:
+                click.echo(f'👹 it was "{part.secret_word}"')
 
                 break
 
             try:
-                score = self._game.move(word)
+                score = part.move(word)
                 click.clear()
 
                 click.echo(
-                    self._score_display()
+                    self._score_display(part)
                 )
 
                 if score == 1:
                     click.echo()
-                    click.echo(f'💖 "{word}" found in {self._game.turn} turns')
+                    click.echo(f'💖 "{word}" found in {part._game.turn} turns')
 
                     break
             except KeyError:

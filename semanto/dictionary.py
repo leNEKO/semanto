@@ -8,7 +8,7 @@ from wordfreq import top_n_list
 class Dictionary:
     '''Frequent word dictionnary
     '''
-    DICTIONARY_SIZE = 2_048
+    DICTIONARY_SIZE = 1_024
 
     def __init__(self):
         self._word_list = [
@@ -22,7 +22,7 @@ class Dictionary:
         shuffle(self._word_list)
 
     @property
-    def next_word(self):
+    def next_random_word(self):
         '''Get next random word
         '''
 
