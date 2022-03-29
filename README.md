@@ -19,7 +19,7 @@ pip install -r requirements.txt
 ## CLI
 
 ```shell
-./main.py
+./main.py cli-ui
 ```
 
 ## WEB UI

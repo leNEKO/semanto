@@ -4,34 +4,38 @@
 import click
 
 from semanto.cli import Cli
+from semanto.web import Web
 from semanto.game import Game
 from semanto.database import Database
 from semanto.dictionary import Dictionary
 
+DEFAULT_DATA_SOURCE = 'data/source.bin'
+
 def new_game():
     return Game(
-        Database('data/source.bin'),
+        Database(DEFAULT_DATA_SOURCE),
         Dictionary()
     )
 
 @click.group()
-def cli():
-    pass
+@click.pass_context
+def cli(ctx):
+    ctx.obj = new_game()
+
 
 @cli.command()
-def web_ui():
+@click.pass_obj
+def web_ui(game: Game):
     '''Web UI with flask
     '''
-    pass
+    web = Web(game)
 
 @cli.command()
-def cli_ui():
+@click.pass_obj
+def cli_ui(game: Game):
     '''Cli UI with click
     '''
-    cli = Cli(
-        new_game()
-    )
-
+    cli = Cli(game)
     click.clear()
     cli.game_loop()
 

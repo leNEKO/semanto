@@ -1,2 +1,4 @@
 gensim
 wordfreq
+flask
+click
