@@ -2,7 +2,7 @@ import click
 from tabulate import tabulate
 
 from .database import Database
-from .game import Game, Part
+from .game import Game, Turn
 
 
 class Cli:
@@ -31,7 +31,7 @@ class Cli:
             )
         )
 
-    def _score_display(self, part: Part):
+    def _score_display(self, part: Turn):
         return tabulate(
             [
                 (
@@ -55,7 +55,7 @@ class Cli:
         '''
         while True:
             self.part_loop(
-                self._game.new()
+                self._game.new_turn()
             )
             click.echo()
 
@@ -63,7 +63,7 @@ class Cli:
                 break
             click.clear()
 
-    def part_loop(self, part: Part):
+    def part_loop(self, part: Turn):
         '''Game round loop
         '''
 

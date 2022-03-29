@@ -3,19 +3,19 @@ from .database import Database
 from .dictionary import Dictionary
 
 
-class Part:
+class Turn:
     def __init__(self, game, secret_word: str):
         self._game = game
         self._secret_word = secret_word
 
         self._scores = {}
-        self._turn = 0
+        self._tries = 0
         self._top_words = None
 
         self._win = False
 
     def move(self, word: str):
-        self._turn += 1
+        self._tries += 1
 
         if word == self._secret_word:
             score = 1
@@ -30,7 +30,7 @@ class Part:
 
         item = {
             word: {
-                'turn': self._turn,
+                'turn': self._tries,
                 'score': score,
                 'progress': progress,
             }
@@ -84,7 +84,7 @@ class Part:
 
     @property
     def turn(self):
-        return self._turn
+        return self._tries
 
 class Game:
     def __init__(
@@ -95,8 +95,8 @@ class Game:
         self._database = database
         self._dictionary = dictionary
 
-    def new(self, secret_word: str = None) -> Part:
-        return Part(
+    def new_turn(self, secret_word: str = None) -> Turn:
+        return Turn(
             self,
             secret_word
             if secret_word is not None
